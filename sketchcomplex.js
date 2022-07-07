@@ -1,5 +1,7 @@
 const USER = 0;
 const FOURIER = 1;
+const MAX_WAVES = Infinity;
+let RUNNING = true;
 
 let x = [];
 let fourierX;
@@ -10,6 +12,11 @@ let state = -1;
 let time = 0;
 let path = [];
 NUM_CIRCLES = 5;
+
+function keyPressed(){
+  //spacebar pauses the animation
+  if(keyCode == 32) RUNNING = !RUNNING;
+}
 
 function mousePressed(){
   drawing = [];
@@ -31,10 +38,12 @@ function mouseReleased(){
   fourierX = dft(x);
 
   fourierX.sort((a,b) => b.amp-a.amp);
+  console.log(fourierX);
 }
 
 function setup() {
   createCanvas(800, 600);
+  background(0);
   // state = 
   // const skip = 10;
   // for(let i=0; i<drawing.length; i+= skip){
@@ -48,6 +57,7 @@ function setup() {
 
 function epicycles(x, y, rotation, fourier){
   for(let i = 0; i<fourier.length; i++){
+    if(i>MAX_WAVES) break;
     let prevx = x;
     let prevy = y;
    
@@ -57,6 +67,7 @@ function epicycles(x, y, rotation, fourier){
 
     x += radius * cos(freq * time + phase + rotation);
     y += radius * sin(freq * time + phase + rotation);
+    
     
     stroke(255, 100);
     noFill();
@@ -69,9 +80,10 @@ function epicycles(x, y, rotation, fourier){
 }
 
 function draw() {
-  background(0);
+  
 
   if(state == USER){
+    background(0);
     let point = createVector(mouseX - width/2, mouseY - height/2);
     drawing.push(point);
     stroke(255);
@@ -82,7 +94,8 @@ function draw() {
     }
     endShape();
     
-  } else if (state == FOURIER){
+  } else if (state == FOURIER && RUNNING){
+    background(0);
     let x = 0;
     let y = 0;
   
